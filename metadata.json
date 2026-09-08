@@ -1,0 +1,6 @@
+{
+  "name": "NetraRakshakAI · PHC Screening System",
+  "description": "Explainable AI for Diabetic Retinopathy Screening in Rural India (Smart India Hackathon 2026 Prototype)",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

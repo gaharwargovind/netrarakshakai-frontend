@@ -1,0 +1,231 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* Light Mode Design Tokens: High-contrast clean clinical workspace */
+  --bg-app: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #f1f5f9;
+  --bg-surface-sunken: #e2e8f0;
+  --text-primary: #0f172a; /* Slate 900 */
+  --text-secondary: #1e293b; /* Slate 800 */
+  --text-muted: #475569; /* Slate 600 - crisp 7:1 contrast on white */
+  --border-app: #cbd5e1; /* Slate 300 */
+  --border-subtle: #94a3b8; /* Slate 400 */
+  --accent: #e11d48;
+  --accent-hover: #be123c;
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #dc2626;
+}
+
+.dark {
+  /* Dark Mode Design Tokens: Scientific instrument workstation */
+  --bg-app: #080c11;
+  --bg-surface: #0e141c;
+  --bg-surface-elevated: #141c27;
+  --bg-surface-sunken: #05080c;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border-app: #1e293b;
+  --border-subtle: #334155;
+  --accent: #f43f5e;
+  --accent-hover: #fb7185;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #f43f5e;
+}
+
+/* 
+ * Light Mode Contrast & Surface Elevation Rules:
+ * Ensures all headings, labels, body text, form controls and surfaces
+ * maintain pristine WCAG AA contrast in light mode.
+ */
+html:not(.dark) {
+  color-scheme: light;
+}
+
+/* Headings in light mode */
+html:not(.dark) :is(h1, h2, h3, h4, h5, h6).text-white {
+  color: #0f172a !important;
+}
+
+/* Elevate low-contrast slate text in light mode */
+html:not(.dark) .text-slate-400:not(.keep-dark):not(.fundus-viewport-stage *) {
+  color: #334155; /* Slate 700 - high contrast readability */
+}
+
+html:not(.dark) .text-slate-300:not(.keep-dark):not(.fundus-viewport-stage *) {
+  color: #1e293b; /* Slate 800 */
+}
+
+html:not(.dark) .text-slate-200:not(.keep-dark):not(.fundus-viewport-stage *) {
+  color: #0f172a; /* Slate 900 */
+}
+
+html:not(.dark) .text-slate-500:not(.keep-dark):not(.fundus-viewport-stage *) {
+  color: #475569; /* Slate 600 */
+}
+
+/* Borders in light mode */
+html:not(.dark) .border-slate-800:not(.fundus-viewport-stage *),
+html:not(.dark) .border-slate-700:not(.fundus-viewport-stage *) {
+  border-color: #cbd5e1;
+}
+
+html:not(.dark) .border-slate-800\/90:not(.fundus-viewport-stage *),
+html:not(.dark) .border-slate-800\/80:not(.fundus-viewport-stage *),
+html:not(.dark) .border-slate-800\/60:not(.fundus-viewport-stage *),
+html:not(.dark) .border-slate-800\/40:not(.fundus-viewport-stage *) {
+  border-color: #e2e8f0;
+}
+
+/* Surface backgrounds in light mode (exempting diagnostic fundus viewports) */
+html:not(.dark) :is(
+  .bg-\[\#11171F\],
+  .bg-\[\#0D1218\],
+  .bg-\[\#0B0F14\],
+  .bg-slate-900\/50,
+  .bg-slate-900\/40,
+  .bg-slate-900\/80,
+  .bg-slate-900
+):not(.fundus-viewport-stage):not(.fundus-viewport-stage *):not(.keep-dark):not(.keep-dark *) {
+  background-color: #ffffff;
+}
+
+html:not(.dark) .bg-slate-950:not(.fundus-viewport-stage):not(.fundus-viewport-stage *):not(.keep-dark) {
+  background-color: #f8fafc;
+}
+
+/* Form input elements in light mode */
+html:not(.dark) input:not([type="range"]):not(.keep-dark),
+html:not(.dark) select:not(.keep-dark),
+html:not(.dark) textarea:not(.keep-dark) {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+html:not(.dark) input::placeholder,
+html:not(.dark) textarea::placeholder {
+  color: #64748b !important;
+}
+
+@keyframes scan {
+  0% {
+    top: 2%;
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    top: 96%;
+    opacity: 0.6;
+  }
+}
+
+.animate-scan {
+  animation: scan 2.2s ease-in-out infinite;
+}
+
+/* Custom subtle scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 3px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #1e293b;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Diagnostic pixel viewports are ALWAYS shielded from inverted color/lighting */
+.fundus-viewport-stage {
+  background: #04070a !important;
+  color: #f8fafc !important;
+}
+
+/* Clinical Report Print Styles (A4 optimization) */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 11pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Hide navigation, footers, interactive toolbars, and background UI */
+  header,
+  footer,
+  nav,
+  .no-print,
+  button:not(.print-keep),
+  .workflow-indicator {
+    display: none !important;
+  }
+
+  /* Optimize modal container to take full page when printed */
+  .report-print-container {
+    position: static !important;
+    inset: auto !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .report-print-body {
+    overflow: visible !important;
+    max-height: none !important;
+    padding: 0 !important;
+  }
+
+  .break-inside-avoid {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .print-border {
+    border-color: #cbd5e1 !important;
+  }
+
+  .print-bg-light {
+    background-color: #f8fafc !important;
+  }
+
+  .print-text-dark {
+    color: #0f172a !important;
+  }
+
+  .print-text-muted {
+    color: #475569 !important;
+  }
+}
+
