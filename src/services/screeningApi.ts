@@ -125,7 +125,7 @@ export async function checkBackendHealth(): Promise<{ isOnline: boolean; url: st
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 1500);
 
-    const res = await fetch(`${API_BASE_URL}/health`, {
+    const res = await fetch(`${API_BASE_URL}/api/v1/health`, {
       method: 'GET',
       signal: controller.signal,
     });
