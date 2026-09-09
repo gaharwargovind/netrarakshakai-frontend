@@ -5,6 +5,16 @@ const API_BASE_URL =
   (import.meta as unknown as { env?: Record<string, string> }).env?.VITE_SCREENING_API_URL ||
   'http://127.0.0.1:8000';
 
+function resolveArtifactUrl(url: string | null | undefined): string {
+  if (!url) return '';
+
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+
+  return `${API_BASE_URL.replace(/\/$/, '')}/${url.replace(/^\//, '')}`;
+}
+
 export interface ScreenRequestPayload {
   imageFile?: File | Blob;
   patientInfo: PatientInfo;
@@ -306,7 +316,9 @@ function adaptE015Response(data: E015Response): ScreeningResponse {
     explanation: {
       method: 'Grad-CAM',
       target_layer: data.explanation.target_layer,
-      overlay_image_url: data.explanation.overlay_url || '',
+      overlay_image_url: resolveArtifactUrl(
+        data.explanation.overlay_url
+      ),
       overlay_base64: data.explanation.overlay_base64 || null,
       disclaimer:
         'This visualization is model attribution, not definitive lesion segmentation or clinical proof.',
