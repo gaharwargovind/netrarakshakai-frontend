@@ -16,7 +16,7 @@ export const SafetyPanel: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-slate-700 dark:text-slate-400 pt-1 font-sans">
         <div className="flex items-start gap-2">
           <span className="text-rose-600 dark:text-rose-400 font-mono font-bold text-xs mt-0.5">•</span>
-          <span><strong>AI-Assisted Screening Only:</strong> Designed to identify patients requiring urgent or routine clinical intervention.</span>
+          <span><strong>AI-Assisted Screening Only:</strong> Designed to identify patients requiring specialist assessment or routine follow-up.</span>
         </div>
         <div className="flex items-start gap-2">
           <span className="text-rose-600 dark:text-rose-400 font-mono font-bold text-xs mt-0.5">•</span>

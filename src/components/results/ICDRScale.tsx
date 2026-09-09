@@ -61,7 +61,7 @@ export const ICDRScale: React.FC<ICDRScaleProps> = ({ classification }) => {
             International Clinical Diabetic Retinopathy (ICDR) Scale
           </h3>
           <p className="text-[11px] text-slate-600 dark:text-slate-400 font-mono mt-0.5">
-            Gold-standard 5-tier classification standard
+            Five-tier ICDR classification framework
           </p>
         </div>
         <div className="flex items-center gap-2 text-[11px] font-mono">

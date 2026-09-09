@@ -174,10 +174,14 @@ export const ClinicalReviewWorkspace: React.FC<ClinicalReviewWorkspaceProps> = (
             <div className="p-3.5 rounded-lg bg-[#0B0F14] border border-slate-800/80 space-y-1">
               <div className="text-slate-400 text-[10px] uppercase">Predicted Severity</div>
               <div className="text-base font-bold text-white">
-                ICDR Grade {classification.predicted_grade} · {classification.grade_name}
+                {classification ? (
+  <>ICDR Grade {classification.predicted_grade} · {classification.grade_name}</>
+) : (
+  <>AI Inference Withheld</>
+)}
               </div>
               <p className="text-[11px] text-slate-400 font-sans leading-relaxed pt-1">
-                {classification.clinical_definition}
+                {classification ? classification.clinical_definition : 'No AI classification was generated because the image did not pass the quality gate.'}
               </p>
             </div>
 
@@ -185,7 +189,7 @@ export const ClinicalReviewWorkspace: React.FC<ClinicalReviewWorkspaceProps> = (
               <div className="flex items-center justify-between">
                 <span className="text-slate-400 text-[10px] uppercase">Calibrated Confidence</span>
                 <span className="text-white font-bold">
-                  {Math.round(calibration.calibrated_confidence * 100)}%
+                  {calibration ? `${Math.round(calibration.calibrated_confidence * 100)}%` : 'N/A — inference withheld'}
                 </span>
               </div>
               <div className="text-[10px] text-slate-400">
@@ -197,11 +201,11 @@ export const ClinicalReviewWorkspace: React.FC<ClinicalReviewWorkspaceProps> = (
               <div className="flex items-center justify-between">
                 <span className="text-slate-400 text-[10px] uppercase">Referable Probability P(DR ≥ 2)</span>
                 <span className={`font-bold ${isReferable ? 'text-rose-400' : 'text-emerald-400'}`}>
-                  {calibration.referable_probability.toFixed(3)}
+                  {calibration ? calibration.referable_probability.toFixed(3) : 'N/A — inference withheld'}
                 </span>
               </div>
               <div className="text-[10px] text-slate-400">
-                Decision Boundary Threshold: ≥ 0.500
+                {calibration ? "Decision Boundary Threshold: ≥ 0.500" : "Decision Boundary: Not evaluated"}
               </div>
             </div>
 
@@ -261,7 +265,7 @@ export const ClinicalReviewWorkspace: React.FC<ClinicalReviewWorkspaceProps> = (
                   {
                     id: 'CONCUR_REFERRAL' as ClinicianDecision,
                     label: 'Concur with Specialist Referral',
-                    desc: 'Route to District Ophthalmic Center for dilated examination & OCT',
+                    desc: 'Route according to the applicable local referral pathway and qualified practitioner guidance.',
                     badge: 'Referral Required',
                     color: 'rose',
                   },

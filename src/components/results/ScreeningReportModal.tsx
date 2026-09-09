@@ -384,42 +384,48 @@ export const ScreeningReportModal: React.FC<ScreeningReportModalProps> = ({
                 <div className="p-4 rounded-xl bg-[#11171F] print:bg-slate-50 border border-slate-800 print:border-slate-300 font-mono text-xs space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-300 print:text-slate-800 uppercase tracking-wider">
-                      Evaluated Optical Dimensions
+                      E013 Deterministic Quality-Gate Measurements
                     </span>
-                    <span className="text-amber-400 font-bold">
-                      Overall Score: {Math.round(screening.quality.quality_score * 100)}%
+                    <span className={
+                      screening.quality.overall_status === 'PASS'
+                        ? 'text-emerald-400 font-bold'
+                        : 'text-amber-400 font-bold'
+                    }>
+                      Gate: {screening.quality.overall_status}
                     </span>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 text-[11px]">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-[11px]">
                     <div className="p-2 rounded bg-[#0B0F14] print:bg-white print:border border-slate-800">
-                      <span className="text-slate-400 block text-[10px]">Focus:</span>
-                      <span className={screening.quality.metrics.focus.status === 'unacceptable' ? 'text-amber-400 font-bold' : 'text-emerald-400'}>
-                        {screening.quality.metrics.focus.status === 'unacceptable' ? 'Deficient' : 'Acceptable'}
-                      </span>
+                      <span className="text-slate-400 block text-[10px]">FOV Coverage:</span>
+                      <span className="text-slate-200">{screening.quality.metrics.fov_coverage.displayValue}</span>
                     </div>
                     <div className="p-2 rounded bg-[#0B0F14] print:bg-white print:border border-slate-800">
-                      <span className="text-slate-400 block text-[10px]">Illumination:</span>
-                      <span className={screening.quality.metrics.illumination.status === 'unacceptable' ? 'text-amber-400 font-bold' : 'text-emerald-400'}>
-                        {screening.quality.metrics.illumination.status === 'unacceptable' ? 'Deficient' : 'Acceptable'}
-                      </span>
+                      <span className="text-slate-400 block text-[10px]">Laplacian Variance:</span>
+                      <span className="text-slate-200">{screening.quality.metrics.laplacian_variance.displayValue}</span>
                     </div>
                     <div className="p-2 rounded bg-[#0B0F14] print:bg-white print:border border-slate-800">
-                      <span className="text-slate-400 block text-[10px]">Field of View:</span>
-                      <span className={screening.quality.metrics.field_of_view.status === 'unacceptable' ? 'text-amber-400 font-bold' : 'text-emerald-400'}>
-                        {screening.quality.metrics.field_of_view.status === 'unacceptable' ? 'Deficient' : 'Acceptable'}
-                      </span>
+                      <span className="text-slate-400 block text-[10px]">Edge Density:</span>
+                      <span className="text-slate-200">{screening.quality.metrics.edge_density.displayValue}</span>
                     </div>
                     <div className="p-2 rounded bg-[#0B0F14] print:bg-white print:border border-slate-800">
-                      <span className="text-slate-400 block text-[10px]">Contrast:</span>
-                      <span className={screening.quality.metrics.contrast.status === 'unacceptable' ? 'text-amber-400 font-bold' : 'text-emerald-400'}>
-                        {screening.quality.metrics.contrast.status === 'unacceptable' ? 'Deficient' : 'Acceptable'}
-                      </span>
+                      <span className="text-slate-400 block text-[10px]">Mean Intensity:</span>
+                      <span className="text-slate-200">{screening.quality.metrics.mean_intensity.displayValue}</span>
                     </div>
                     <div className="p-2 rounded bg-[#0B0F14] print:bg-white print:border border-slate-800">
-                      <span className="text-slate-400 block text-[10px]">Noise / Artifacts:</span>
-                      <span className={screening.quality.metrics.noise.status === 'unacceptable' ? 'text-amber-400 font-bold' : 'text-emerald-400'}>
-                        {screening.quality.metrics.noise.status === 'unacceptable' ? 'Deficient' : 'Acceptable'}
-                      </span>
+                      <span className="text-slate-400 block text-[10px]">Dark Fraction:</span>
+                      <span className="text-slate-200">{screening.quality.metrics.dark_fraction.displayValue}</span>
+                    </div>
+                    <div className="p-2 rounded bg-[#0B0F14] print:bg-white print:border border-slate-800">
+                      <span className="text-slate-400 block text-[10px]">Bright Fraction:</span>
+                      <span className="text-slate-200">{screening.quality.metrics.bright_fraction.displayValue}</span>
+                    </div>
+                    <div className="p-2 rounded bg-[#0B0F14] print:bg-white print:border border-slate-800">
+                      <span className="text-slate-400 block text-[10px]">P90–P10 Spread:</span>
+                      <span className="text-slate-200">{screening.quality.metrics.percentile_spread_90.displayValue}</span>
+                    </div>
+                    <div className="p-2 rounded bg-[#0B0F14] print:bg-white print:border border-slate-800">
+                      <span className="text-slate-400 block text-[10px]">Noise MAD:</span>
+                      <span className="text-slate-200">{screening.quality.metrics.noise_mad.displayValue}</span>
                     </div>
                   </div>
                 </div>

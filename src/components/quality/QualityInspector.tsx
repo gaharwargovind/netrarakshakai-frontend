@@ -24,11 +24,14 @@ export const QualityInspector: React.FC<QualityInspectorProps> = ({
   const isPass = quality.overall_status === 'PASS';
 
   const metricsList: QualityMetric[] = [
-    quality.metrics.focus,
-    quality.metrics.field_of_view,
-    quality.metrics.illumination,
-    quality.metrics.contrast,
-    quality.metrics.noise,
+    quality.metrics.fov_coverage,
+    quality.metrics.laplacian_variance,
+    quality.metrics.edge_density,
+    quality.metrics.mean_intensity,
+    quality.metrics.dark_fraction,
+    quality.metrics.bright_fraction,
+    quality.metrics.percentile_spread_90,
+    quality.metrics.noise_mad,
   ];
 
   // Synthesize minimal container for quality report modal
@@ -41,6 +44,8 @@ export const QualityInspector: React.FC<QualityInspectorProps> = ({
       grade_name: 'Unassessed',
       clinical_definition: 'Not evaluated due to quality gate hold',
       probabilities: [1, 0, 0, 0, 0],
+      referable: false,
+      referable_probability: 0,
     },
     calibration: {
       method: 'Temperature scaling',
@@ -116,7 +121,7 @@ export const QualityInspector: React.FC<QualityInspectorProps> = ({
               {isPass ? 'QUALITY ACCEPTABLE' : 'QUALITY INSUFFICIENT'}
             </div>
             <div className="text-[11px] text-slate-400">
-              Score: {Math.round(quality.quality_score * 100)}% · Optical Gate {isPass ? 'PASSED' : 'HOLD'}
+              Optical Gate {isPass ? 'PASSED' : 'HOLD'}
             </div>
           </div>
         </div>
@@ -166,14 +171,19 @@ export const QualityInspector: React.FC<QualityInspectorProps> = ({
               <span className="text-xs font-mono font-semibold text-slate-300 uppercase tracking-wider">
                 Optical Assessment Parameters
               </span>
-              <span className="text-xs font-mono text-slate-400">Acceptance Threshold: ≥ 70%</span>
+              <span className="text-xs font-mono text-slate-400">E013 deterministic quality-gate measurements</span>
             </div>
 
             <div className="space-y-4">
               {metricsList.map((metric) => {
                 const isMetricOk = metric.status === 'acceptable';
                 const isWarning = metric.status === 'warning';
-                const percentage = Math.round(metric.value * 100);
+                const percentage =
+                  metric.name === 'FOV coverage' ||
+                  metric.name === 'Dark fraction' ||
+                  metric.name === 'Bright fraction'
+                    ? Math.max(0, Math.min(100, Math.round(metric.value * 100)))
+                    : 100;
 
                 return (
                   <div
@@ -247,7 +257,7 @@ export const QualityInspector: React.FC<QualityInspectorProps> = ({
                     Image Quality Approved for Inference
                   </h3>
                   <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-                    Optical resolution, focus, and retinal illumination meet all automated criteria. Image is gradable under ICDR screening protocols.
+                    The deterministic E013 quality gate accepted the image for automated screening triage. This quality assessment evaluates technical suitability, not the presence or absence of disease.
                   </p>
                 </div>
               </div>
@@ -295,12 +305,15 @@ export const QualityInspector: React.FC<QualityInspectorProps> = ({
                 <div className="text-[11px] font-mono text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-900/60 p-2.5 rounded border border-slate-200 dark:border-slate-800 space-y-1">
                   <div className="text-slate-800 dark:text-slate-300 font-bold text-[10px] uppercase">Evaluated Optical Dimensions:</div>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 text-[10px]">
-                    <div>Focus: <span className={quality.metrics.focus.status === 'unacceptable' ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-emerald-600 dark:text-emerald-400'}>{quality.metrics.focus.status === 'unacceptable' ? 'Deficient' : 'Acceptable'}</span></div>
-                    <div>Illumination: <span className={quality.metrics.illumination.status === 'unacceptable' ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-emerald-600 dark:text-emerald-400'}>{quality.metrics.illumination.status === 'unacceptable' ? 'Uneven' : 'Acceptable'}</span></div>
-                    <div>Field of View: <span className={quality.metrics.field_of_view.status === 'unacceptable' ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-emerald-600 dark:text-emerald-400'}>{quality.metrics.field_of_view.status === 'unacceptable' ? 'Restricted' : 'Adequate'}</span></div>
-                    <div>Contrast: <span className={quality.metrics.contrast.status === 'unacceptable' ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-emerald-600 dark:text-emerald-400'}>{quality.metrics.contrast.status === 'unacceptable' ? 'Low' : 'Adequate'}</span></div>
-                    <div>Noise / Artifacts: <span className={quality.metrics.noise.status === 'unacceptable' ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-emerald-600 dark:text-emerald-400'}>{quality.metrics.noise.status === 'unacceptable' ? 'High' : 'Low'}</span></div>
-                    <div>Overall Score: <span className="text-slate-900 dark:text-slate-300 font-bold">{Math.round(quality.quality_score * 100)}%</span></div>
+                    <div>FOV coverage: <span className="text-slate-900 dark:text-slate-300 font-bold">{quality.metrics.fov_coverage.displayValue}</span></div>
+                    <div>Laplacian variance: <span className="text-slate-900 dark:text-slate-300 font-bold">{quality.metrics.laplacian_variance.displayValue}</span></div>
+                    <div>Edge density: <span className="text-slate-900 dark:text-slate-300 font-bold">{quality.metrics.edge_density.displayValue}</span></div>
+                    <div>Mean intensity: <span className="text-slate-900 dark:text-slate-300 font-bold">{quality.metrics.mean_intensity.displayValue}</span></div>
+                    <div>Dark fraction: <span className="text-slate-900 dark:text-slate-300 font-bold">{quality.metrics.dark_fraction.displayValue}</span></div>
+                    <div>Bright fraction: <span className="text-slate-900 dark:text-slate-300 font-bold">{quality.metrics.bright_fraction.displayValue}</span></div>
+                    <div>P90–P10 spread: <span className="text-slate-900 dark:text-slate-300 font-bold">{quality.metrics.percentile_spread_90.displayValue}</span></div>
+                    <div>Noise MAD: <span className="text-slate-900 dark:text-slate-300 font-bold">{quality.metrics.noise_mad.displayValue}</span></div>
+                    <div>Overall Gate: <span className="text-slate-900 dark:text-slate-300 font-bold">{quality.overall_status}</span></div>
                   </div>
                 </div>
               </div>

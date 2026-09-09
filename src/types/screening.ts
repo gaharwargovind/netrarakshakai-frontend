@@ -1,9 +1,12 @@
 /**
  * NetraRakshakAI Screening Domain Types
- * Strict typing reflecting the Python E015 backend contract.
+ *
+ * These types represent the frontend-normalized screening contract.
+ * The live E015 API uses a different wire format; screeningApi.ts
+ * explicitly adapts that response before it reaches React components.
  */
 
-export type Eye = 'OD' | 'OS'; // OD = Oculus Dexter (Right), OS = Oculus Sinister (Left)
+export type Eye = 'OD' | 'OS';
 
 export interface PatientInfo {
   patientId: string;
@@ -16,25 +19,43 @@ export interface PatientInfo {
 
 export type QualityAssessmentStatus = 'PASS' | 'FAIL';
 
+export type QualityMetricStatus =
+  | 'acceptable'
+  | 'warning'
+  | 'unacceptable';
+
 export interface QualityMetric {
   name: string;
-  value: number; // 0.0 - 1.0 (or percentage)
+  value: number;
   displayValue: string;
-  threshold: number;
-  status: 'acceptable' | 'warning' | 'unacceptable';
+  threshold?: number;
+  status: QualityMetricStatus;
   clinicalDescription: string;
+  unit?: string;
 }
 
 export interface QualityAssessment {
   overall_status: QualityAssessmentStatus;
-  quality_score: number; // 0.0 to 1.0
+
+  /**
+   * Live E015 does not expose a single composite 0-1 quality score.
+   * Benchmark demonstration cases may still provide one.
+   */
+  quality_score?: number;
+
   metrics: {
-    focus: QualityMetric;
-    field_of_view: QualityMetric;
-    illumination: QualityMetric;
-    contrast: QualityMetric;
-    noise: QualityMetric;
+    fov_coverage: QualityMetric;
+    laplacian_variance: QualityMetric;
+    edge_density: QualityMetric;
+    mean_intensity: QualityMetric;
+    dark_fraction: QualityMetric;
+    bright_fraction: QualityMetric;
+    percentile_spread_90: QualityMetric;
+    noise_mad: QualityMetric;
   };
+
+  failed_checks: string[];
+  message: string;
   rejection_reason?: string | null;
 }
 
@@ -42,15 +63,17 @@ export type ICDRGrade = 0 | 1 | 2 | 3 | 4;
 
 export interface ICDRClassification {
   predicted_grade: ICDRGrade;
-  grade_name: string; // 'No Apparent DR' | 'Mild NPDR' | 'Moderate NPDR' | 'Severe NPDR' | 'Proliferative DR'
+  grade_name: string;
   clinical_definition: string;
   probabilities: [number, number, number, number, number];
+  referable: boolean;
+  referable_probability: number;
 }
 
 export interface CalibrationData {
   method: 'Temperature scaling';
-  calibrated_confidence: number; // e.g. 0.914 (91.4%)
-  referable_probability: number; // e.g. 0.892
+  calibrated_confidence: number;
+  referable_probability: number;
   is_calibrated: boolean;
   temperature_parameter?: number;
 }
@@ -59,15 +82,22 @@ export interface ExplanationData {
   method: 'Grad-CAM';
   target_layer: string;
   overlay_image_url: string;
+  overlay_base64?: string | null;
   disclaimer: string;
 }
 
+export type RecommendationCategory =
+  | 'Specialist assessment recommended'
+  | 'Routine monitoring'
+  | 'Recapture required'
+  | 'Human review required';
+
 export interface ScreeningRecommendation {
-  referable: boolean; // ICDR >= 2
-  category: 'Specialist referral recommended' | 'Routine monitoring' | 'Recapture required' | 'Urgent specialist referral';
+  referable: boolean;
+  category: RecommendationCategory;
   reason: string;
   suggested_action: string;
-  timeframe: string;
+  timeframe?: string;
 }
 
 export interface TimingMetrics {
@@ -78,13 +108,15 @@ export interface TimingMetrics {
 }
 
 export interface PipelineMetadata {
-  model_name: string; // 'E007'
-  pipeline_name: string; // 'E015'
-  pipeline_version: string; // '1.0.0-E015'
+  model_name: string;
+  pipeline_name: string;
+  pipeline_version: string;
   calibration_method: string;
   checkpoint_verification: 'verified' | 'unverified';
   checkpoint_hash: string;
   device_target: string;
+  timestamp?: string;
+  scientific_mandate?: string;
 }
 
 export interface ScreeningResponse {
@@ -93,15 +125,21 @@ export interface ScreeningResponse {
   is_simulation?: boolean;
   simulation_label?: string;
   quality: QualityAssessment;
-  classification: ICDRClassification;
-  calibration: CalibrationData;
-  explanation: ExplanationData;
+  classification: ICDRClassification | null;
+  calibration: CalibrationData | null;
+  explanation: ExplanationData | null;
   recommendation: ScreeningRecommendation;
   timing: TimingMetrics;
   metadata: PipelineMetadata;
 }
 
-export type WorkflowStep = 'PATIENT' | 'IMAGE' | 'QUALITY' | 'ANALYSIS' | 'RESULT' | 'REVIEW';
+export type WorkflowStep =
+  | 'PATIENT'
+  | 'IMAGE'
+  | 'QUALITY'
+  | 'ANALYSIS'
+  | 'RESULT'
+  | 'REVIEW';
 
 export type ExpectedCaseResult =
   | 'Routine (Grade 0)'
@@ -121,4 +159,3 @@ export interface ClinicalCasePreset {
   expectedResult: ExpectedCaseResult;
   mockResponse: ScreeningResponse;
 }
-
