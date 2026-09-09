@@ -65,7 +65,7 @@ export const QualityInspector: React.FC<QualityInspectorProps> = ({
       reason: 'Automated screening not completed due to insufficient image quality.',
       suggested_action: 'Recapture retinal image under improved optical conditions or route for qualified human review.',
       referable: false,
-      timeframe: 'Immediate recapture / routing',
+      timeframe: 'Prompt recapture or clinical triage',
     },
     metadata: {
       model_name: 'E007',

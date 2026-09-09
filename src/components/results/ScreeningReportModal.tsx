@@ -495,25 +495,34 @@ export const ScreeningReportModal: React.FC<ScreeningReportModalProps> = ({
                 <div className="flex items-center justify-between border-b border-slate-800 print:border-slate-200 pb-2">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-slate-300 print:text-slate-800 uppercase tracking-wider">
-                      Image Quality Assessment
+                      Technical Image Quality — E013 Deterministic Gate
                     </span>
-                    <span className="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 font-bold text-[10px] uppercase print:bg-emerald-100 print:text-emerald-800 print:border-emerald-600">
-                      QUALITY PASS
+                    <span className={`px-2 py-0.5 rounded font-bold text-[10px] uppercase ${
+                      screening.quality.overall_status === 'PASS'
+                        ? 'bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 print:bg-emerald-100 print:text-emerald-800 print:border-emerald-600'
+                        : 'bg-rose-950/80 border border-rose-500/50 text-rose-300 print:bg-rose-100 print:text-rose-800 print:border-rose-600'
+                    }`}>
+                      GATE {screening.quality.overall_status}
                     </span>
                   </div>
-                  <span className="text-xs text-slate-300 print:text-slate-700">
-                    Gradable for automated screening workflow ({Math.round(screening.quality.quality_score * 100)}%)
-                  </span>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-[11px] pt-1">
-                  <div>Focus: <strong className="text-emerald-400 print:text-emerald-700">Acceptable</strong></div>
-                  <div>Illumination: <strong className="text-emerald-400 print:text-emerald-700">Acceptable</strong></div>
-                  <div>Field of View: <strong className="text-emerald-400 print:text-emerald-700">Adequate</strong></div>
-                  <div>Contrast: <strong className="text-emerald-400 print:text-emerald-700">Adequate</strong></div>
-                  <div>Noise / Artifacts: <strong className="text-emerald-400 print:text-emerald-700">Low</strong></div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] pt-1">
+                  <div>FOV Coverage: <strong className="text-slate-200 print:text-slate-900">{screening.quality.metrics.fov_coverage.displayValue}</strong></div>
+                  <div>Laplacian Variance: <strong className="text-slate-200 print:text-slate-900">{screening.quality.metrics.laplacian_variance.displayValue}</strong></div>
+                  <div>Edge Density: <strong className="text-slate-200 print:text-slate-900">{screening.quality.metrics.edge_density.displayValue}</strong></div>
+                  <div>Mean Intensity: <strong className="text-slate-200 print:text-slate-900">{screening.quality.metrics.mean_intensity.displayValue}</strong></div>
+                  <div>Dark Fraction: <strong className="text-slate-200 print:text-slate-900">{screening.quality.metrics.dark_fraction.displayValue}</strong></div>
+                  <div>Bright Fraction: <strong className="text-slate-200 print:text-slate-900">{screening.quality.metrics.bright_fraction.displayValue}</strong></div>
+                  <div>P90 Spread: <strong className="text-slate-200 print:text-slate-900">{screening.quality.metrics.percentile_spread_90.displayValue}</strong></div>
+                  <div>Noise MAD: <strong className="text-slate-200 print:text-slate-900">{screening.quality.metrics.noise_mad.displayValue}</strong></div>
                 </div>
+                {screening.quality.failed_checks.length > 0 && (
+                  <div className="text-[10px] text-rose-400 print:text-rose-700 pt-1 border-t border-slate-800/60 print:border-slate-200">
+                    Failed checks: {screening.quality.failed_checks.join(', ')}
+                  </div>
+                )}
                 <div className="text-[10px] text-slate-400 print:text-slate-600 pt-1 border-t border-slate-800/60 print:border-slate-200">
-                  This quality assessment concerns suitability for the automated screening workflow and does not establish the presence or absence of retinal disease.
+                  This technical quality assessment concerns suitability for the automated screening workflow and does not establish the presence or absence of retinal disease.
                 </div>
               </div>
 
