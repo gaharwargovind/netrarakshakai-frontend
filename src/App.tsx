@@ -74,28 +74,46 @@ function AppContent() {
     latencyMs?: number;
   }>({ isOnline: false, url: API_BASE_URL });
 
-  // Probe backend on mount
+  // Probe backend on mount and periodically every 30s
   useEffect(() => {
-    checkBackendHealth()
-      .then((status) => {
-        setBackendStatus(status);
-        if (status.isOnline) {
-          setError((current) => {
-            const code = current?.code as string | undefined;
-            if (
-              code === 'NETWORK_ERROR' ||
-              code === 'SERVICE_UNAVAILABLE' ||
-              code === 'BACKEND_UNAVAILABLE' ||
-              code === 'BACKEND_TIMEOUT' ||
-              code === 'NETWORK_FAILURE'
-            ) {
-              return null;
-            }
-            return current;
-          });
-        }
-      })
-      .catch(() => {});
+    let active = true;
+
+    const probeBackend = async () => {
+      const status = await checkBackendHealth();
+
+      if (!active) return;
+
+      setBackendStatus(status);
+
+      if (status.isOnline) {
+        setError((current) => {
+          const code = current?.code as string | undefined;
+
+          if (
+            code === 'NETWORK_ERROR' ||
+            code === 'SERVICE_UNAVAILABLE' ||
+            code === 'BACKEND_UNAVAILABLE' ||
+            code === 'BACKEND_TIMEOUT' ||
+            code === 'NETWORK_FAILURE'
+          ) {
+            return null;
+          }
+
+          return current;
+        });
+      }
+    };
+
+    void probeBackend();
+
+    const intervalId = window.setInterval(() => {
+      void probeBackend();
+    }, 30000);
+
+    return () => {
+      active = false;
+      window.clearInterval(intervalId);
+    };
   }, []);
 
   // Preset Loader for Benchmark Scenarios
