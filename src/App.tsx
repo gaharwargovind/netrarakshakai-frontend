@@ -76,7 +76,26 @@ function AppContent() {
 
   // Probe backend on mount
   useEffect(() => {
-    checkBackendHealth().then(setBackendStatus).catch(() => {});
+    checkBackendHealth()
+      .then((status) => {
+        setBackendStatus(status);
+        if (status.isOnline) {
+          setError((current) => {
+            const code = current?.code as string | undefined;
+            if (
+              code === 'NETWORK_ERROR' ||
+              code === 'SERVICE_UNAVAILABLE' ||
+              code === 'BACKEND_UNAVAILABLE' ||
+              code === 'BACKEND_TIMEOUT' ||
+              code === 'NETWORK_FAILURE'
+            ) {
+              return null;
+            }
+            return current;
+          });
+        }
+      })
+      .catch(() => {});
   }, []);
 
   // Preset Loader for Benchmark Scenarios
@@ -98,6 +117,7 @@ function AppContent() {
 
   // Workflow Handlers
   const handleStartFromHome = () => {
+    setError(null);
     setIsHomeActive(false);
     setCurrentStep('PATIENT');
   };
@@ -108,6 +128,7 @@ function AppContent() {
       handleSelectPreset(presetId);
     } else {
       setActivePresetId(undefined);
+      setError(null);
       setCurrentStep('IMAGE');
     }
   };
@@ -115,6 +136,7 @@ function AppContent() {
   const handleImageSelected = (url: string, file?: File, presetId?: string) => {
     setSelectedImageUrl(url);
     setSelectedFile(file);
+    setError(null);
     if (presetId) {
       setActivePresetId(presetId);
       const preset = CLINICAL_CASE_PRESETS.find((c) => c.id === presetId);

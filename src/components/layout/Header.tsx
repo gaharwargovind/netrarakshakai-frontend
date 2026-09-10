@@ -115,10 +115,18 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Edge status micro-indicator */}
           <div
             className="flex items-center gap-1.5 px-2 py-1 rounded border border-[var(--border-app)] text-[10px] font-mono text-[var(--text-muted)]"
-            title={backendStatus?.isOnline ? 'Edge model connected' : 'Local browser engine ready'}
+            title={
+              backendStatus?.isOnline
+                ? `Configured screening service connected: ${backendStatus.url}`
+                : `Configured screening service unavailable: ${backendStatus?.url || 'unknown'}`
+            }
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
-            <span>Edge Ready</span>
+            <span
+              className={`w-1.5 h-1.5 rounded-full inline-block ${
+                backendStatus?.isOnline ? 'bg-emerald-500' : 'bg-rose-500'
+              }`}
+            />
+            <span>{backendStatus?.isOnline ? 'Edge Ready' : 'Edge Offline'}</span>
           </div>
 
           {/* Theme switcher segmented control */}
