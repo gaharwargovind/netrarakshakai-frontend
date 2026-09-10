@@ -1,7 +1,7 @@
 import { PatientInfo, ScreeningResponse, ICDRGrade, QualityMetric } from '../types/screening';
 import { CLINICAL_CASE_PRESETS } from '../data/clinicalCases';
 
-const API_BASE_URL =
+export const API_BASE_URL =
   (import.meta as unknown as { env?: Record<string, string> }).env?.VITE_SCREENING_API_URL ||
   'http://127.0.0.1:8000';
 
@@ -401,7 +401,7 @@ export async function submitScreening(
         const errText = await response.text().catch(() => '');
 
         throw new ScreeningServiceError(
-          `BACKEND UNAVAILABLE: The local Python E015 inference engine returned HTTP ${response.status}. Live inference is blocked to prevent unverified diagnosis. Reconnect the screening engine or route the patient image for manual human review.`,
+          `BACKEND UNAVAILABLE: The configured Python E015 inference service returned HTTP ${response.status}. Live inference is blocked to prevent unverified diagnosis. Reconnect the screening engine or route the patient image for manual human review.`,
           'SERVICE_UNAVAILABLE',
           errText
         );
@@ -415,7 +415,7 @@ export async function submitScreening(
       }
 
       throw new ScreeningServiceError(
-        `BACKEND UNAVAILABLE: The local Python E015 inference engine is unreachable at ${API_BASE_URL}. Live inference is blocked. Please reconnect the screening engine or route the patient image for qualified human review.`,
+        `BACKEND UNAVAILABLE: The configured Python E015 inference service is unreachable at ${API_BASE_URL}. Live inference is blocked. Please reconnect the screening engine or route the patient image for qualified human review.`,
         'SERVICE_UNAVAILABLE',
         networkErr instanceof Error ? networkErr.message : String(networkErr)
       );

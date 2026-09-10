@@ -6,7 +6,7 @@ import {
   Eye,
 } from './types/screening';
 import { CLINICAL_CASE_PRESETS } from './data/clinicalCases';
-import { submitScreening, checkBackendHealth, ScreeningServiceError } from './services/screeningApi';
+import { submitScreening, checkBackendHealth, ScreeningServiceError, API_BASE_URL } from './services/screeningApi';
 import { ThemeProvider } from './context/ThemeContext';
 
 import { Header } from './components/layout/Header';
@@ -72,7 +72,7 @@ function AppContent() {
     isOnline: boolean;
     url: string;
     latencyMs?: number;
-  }>({ isOnline: false, url: 'http://127.0.0.1:8000' });
+  }>({ isOnline: false, url: API_BASE_URL });
 
   // Probe backend on mount
   useEffect(() => {
@@ -278,7 +278,7 @@ function AppContent() {
                     <div className="font-bold text-rose-300 uppercase tracking-wider text-[10px]">
                       Required Clinical Actions:
                     </div>
-                    <div>1. Reconnect the screening engine (FastAPI / E015 service at 127.0.0.1:8000).</div>
+                    <div>1. Reconnect the screening engine (FastAPI / E015 service at {backendStatus?.url || API_BASE_URL}).</div>
                     <div>2. If offline, route patient fundus photographs for direct qualified human ophthalmic review.</div>
                     <div>3. To explore the clinical workflow offline, select a curated scenario from the Benchmark Library.</div>
                   </div>

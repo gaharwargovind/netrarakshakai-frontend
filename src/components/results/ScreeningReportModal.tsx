@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../../services/screeningApi';
 import React, { useState } from 'react';
 import { ScreeningResponse, PatientInfo } from '../../types/screening';
 import {
@@ -210,7 +211,7 @@ export const ScreeningReportModal: React.FC<ScreeningReportModalProps> = ({
                       LIVE SCREENING
                     </span>
                     <span className="text-[10px] text-slate-400 print:text-slate-600 block mt-0.5">
-                      Local FastAPI/E015 screening engine (127.0.0.1:8000)
+                      Configured FastAPI/E015 screening service ({API_BASE_URL})
                     </span>
                   </div>
                 )}
@@ -256,7 +257,7 @@ export const ScreeningReportModal: React.FC<ScreeningReportModalProps> = ({
                       <div className="font-bold text-rose-400 print:text-rose-700 uppercase tracking-wider text-[10px]">
                         Required Protocol Next Steps:
                       </div>
-                      <div>1. Reconnect the screening engine (FastAPI / E015 service at 127.0.0.1:8000).</div>
+                      <div>1. Reconnect the screening engine (FastAPI / E015 service at {API_BASE_URL}).</div>
                       <div>2. Route patient fundus photographs for qualified human ophthalmic review.</div>
                       <div>3. Benchmark Library remains available for offline demonstration and workflow illustration.</div>
                     </div>
