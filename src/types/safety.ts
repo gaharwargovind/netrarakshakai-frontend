@@ -141,11 +141,11 @@ export const SAFETY_STATE_DEFINITIONS: Record<SafetyOperationalState, SafetyStat
     textLabel: 'BACKEND UNAVAILABLE',
     badge: 'LIVE INFERENCE BLOCKED',
     iconName: 'wifi-off',
-    whatHappened: 'The local Python E015 screening engine cannot currently be reached.',
+    whatHappened: 'The configured Python E015 screening service cannot currently be reached.',
     whyExplanation:
       'Live inference is strictly blocked to prevent unverified diagnosis or uncalibrated results. Synthetic fallback is prohibited for real patient care.',
     recommendedAction:
-      'Reconnect the local screening engine (127.0.0.1:8000) or route patient image for manual human review.',
+      'Verify the configured screening service connection or route the patient image for qualified human review.',
     theme: 'rose',
   },
   DEMONSTRATION: {
